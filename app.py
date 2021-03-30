@@ -8,8 +8,8 @@ import plotly.express as px
 ## Datasets
 
 crime = pd.read_csv('data/crime_cleaned.csv')
-victim_donut_data = pd.read_excel('data/victims_donut_data.csv', index_col = 0)
-pop_area_count = pd.read_excel('data/pop_area_count.csv', index_col = 0)
+victim_donut_data = pd.read_csv('data/victims_donut_data.csv', index_col = 0)
+pop_area_count = pd.read_csv('data/pop_area_count.csv', index_col = 0)
 crime_bar = pd.read_csv('data/la_crime_data.csv')
 crime_type = pd.read_csv('data/crime_type.csv', index_col = 0)
 pop_data = pd.read_csv('data/Population_HV.csv')
