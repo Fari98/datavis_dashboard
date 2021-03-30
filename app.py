@@ -4,8 +4,6 @@ import numpy as np
 import pydeck as pdk
 import plotly.graph_objects as go
 import plotly.express as px
-import matplotlib.pyplot as plt
-import plotly.io as pio 
 
 ## Datasets
 
