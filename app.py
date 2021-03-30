@@ -1,5 +1,5 @@
 import streamlit as st
-import pandas as pd
+import pandas as pd 
 import numpy as np 
 import pydeck as pdk
 import plotly.graph_objects as go
@@ -12,7 +12,7 @@ import plotly.io as pio
 crime = pd.read_csv('data/crime_cleaned.csv')
 victim_donut_data = pd.read_excel('data/victims_donut_data.xlsx', index_col = 0)
 pop_area_count = pd.read_excel('data/pop_area_count.xlsx', index_col = 0)
-crime_bar = pd.read_csv('data/LA_crime_HV.csv')
+crime_bar = pd.read_csv('data/la_crime_data.csv')
 crime_type = pd.read_csv('data/crime_type.csv', index_col = 0)
 pop_data = pd.read_csv('data/Population_HV.csv')
 
@@ -70,30 +70,25 @@ def most_affected_area(data, year):
     # Apply the year filter
     data_selection = data[data['Year'] == year]
     
-    # Define dataframe for this plot
-    areas_affected = pd.DataFrame(data_selection.groupby('Area Name', as_index=False)['DR Number'].nunique().sort_values('DR Number', ascending=False))
-    
     # Define variables
-    most_affected_area = areas_affected['Area Name'].iloc[0]
-    crimes_occured_most = areas_affected['DR Number'].iloc[0]
-    
+    most_affected_area = data_selection.groupby('Area Name').count().sort_values('Year', ascending = False).index[0]
+    crimes_occured_most = data_selection.groupby('Area Name').count().sort_values('Year', ascending = False)['Year'][0]
     # Plot it
-    import plotly.graph_objects as go
     fig = go.Figure()
 
     fig.add_trace(go.Indicator(
         mode = "number",
         value = crimes_occured_most,
         number={"font":{"size":40}},
-        title = {"text": f"Area with highest number<br>of crimes in {year}<br><br><span style='font-size:1.8em;color:gray'>{most_affected_area}</span>"}
+        title = {"text": f"Most Affected Area<br><br><span style='font-size:1.8em;color:gray'>{most_affected_area}</span>"}
     ))
     
-    return fig    
+    return fig        
 
 def crimes_occured_delta(data, year):
     # Define the variables
-    crimes_occur_selected = data[(data['Year'] == year)]['Date Occurred'].count()
-    crimes_occur_bf_selected = data[(data['Year'] == year-1)]['Date Occurred'].count()
+    crimes_occur_selected = len(data[(data['Year'] == year)])
+    crimes_occur_bf_selected = len(data[(data['Year'] == year-1)])
     
     # Plot it
     fig = go.Figure()
@@ -115,47 +110,44 @@ def crimes_occured_delta(data, year):
     return fig
 
 def least_affected_area(data, year):
-    # Apply the year filter
+      # Apply the year filter
     data_selection = data[data['Year'] == year]
     
     # Define dataframe for this plot
-    areas_affected = pd.DataFrame(data_selection.groupby('Area Name', as_index=False)['DR Number'].nunique().sort_values('DR Number', ascending=False))
+    
     
     # Define variables
-    least_affected_area = areas_affected['Area Name'].iloc[-1]
-    crimes_occured_least = areas_affected['DR Number'].iloc[-1]
-    
+    most_affected_area = data_selection.groupby('Area Name').count().sort_values('Year', ascending = False).index[-1]
+    crimes_occured_most = data_selection.groupby('Area Name').count().sort_values('Year', ascending = False)['Year'][-1]
     # Plot it
     fig = go.Figure()
 
     fig.add_trace(go.Indicator(
         mode = "number",
-        value = crimes_occured_least,
+        value = crimes_occured_most,
         number={"font":{"size":40}},
-        title = {"text": f"Area with lowest number<br>of crimes in {year}<br><br><span style='font-size:1.8em;color:gray'>{least_affected_area}</span>"}
+        title = {"text": f"Most Affected Area<br><br><span style='font-size:1.8em;color:gray'>{most_affected_area}</span>"}
     ))
     
-    return fig
+    return fig  
 
 def most_affected_year(data, area):     
-    # Apply the year filter
+      # Apply the year filter
     data_selection = data[data['Area Name'] == area]
-    
-    # Define dataframe for this plot
-    years_affected = pd.DataFrame(data_selection.groupby('Year', as_index=False)['DR Number'].nunique().sort_values('DR Number', ascending=False))
-    
+
     # Define variables
-    most_affected_year = years_affected['Year'].iloc[0]
-    crimes_occured_most_year = years_affected['DR Number'].iloc[0]
+    most_affected_year = data_selection.groupby('Year').count().sort_values('Area Name', ascending = False).index[0]
+    crimes_occured_most_year = data_selection.groupby('Year').count().sort_values('Area Name', ascending = False).iloc[0]['Area Name']
     
     # Plot it
+    import plotly.graph_objects as go
     fig = go.Figure()
     
     fig.add_trace(go.Indicator(
         mode = "number",
         value = int(crimes_occured_most_year),
         number={"font":{"size":40}},
-        title = {"text": f"Year with highest number<br>of crimes in {area}<br><br><span style='font-size:1.8em;color:gray'>{most_affected_year}</span>"}
+        title = {"text": f"Most Affected Year<br><br><span style='font-size:1.8em;color:gray'>{most_affected_year}</span>"}
         ))
     
     return fig
