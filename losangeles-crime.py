@@ -32,16 +32,18 @@ def map(data, lat, lon, zoom):
         },
         layers=[
             pdk.Layer(
-                "HeatmapLayer", #'' HexagonLayer
+                "HeatmapLayer", # HexagonLayer ScatterplotLayer HeatmapLayer
             
                 data=data,
                 get_position=["LON", "LAT"],
-                radius=100,
-                elevation_scale=20,
-                elevation_range=[0, 1000],
+                # radius=100,
+                # auto_highlight=True,
+                # get_radius=100,          # Radius is given in meters
+                # get_fill_color=[180, 0, 200, 140],
                 pickable=True,
-                extruded=True,
-                coverage = 1
+                opacity=0.5,
+                # extruded=True,
+                # coverage = 1
             ),
         ]
     ))
@@ -57,6 +59,7 @@ def ring(selected):
 
     # Use `hole` to create a donut-like pie chart
     fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.6)], layout=layout)
+    fig.update_layout(autosize=False, width=400, height=400)
     return fig
 
 def bar_chart(selected):
@@ -220,7 +223,7 @@ def crime_line(year, area):
 ## Layout
 
 st.title('Crime in Los Angeles')
-st.subheader('Interactive visual analysis of Los Angeles crimes from 2010 though 2019')
+st.subheader('Interactive visual analysis of Los Angeles crimes from 2010 though 2019.')
 
 st.write('')
 st.write('')
@@ -256,12 +259,12 @@ midpoint = (np.average(crime["LAT"]), np.average(crime["LON"]))
 barchart = barchart(year_selected)
 # with left2:
 
-st.header("Map of Los Angeles crimes in %i" % (year_selected))
+st.header("Map of Los Angeles crimes in %i." % (year_selected))
 st.write('')
 map(crime, midpoint[0], midpoint[1], 8.5)
 
 # with right2:
-st.header("Top 10 most occurent crime types in %i" % (year_selected))
+st.header("Top 10 most occurent crime types in %i." % (year_selected))
 st.plotly_chart(barchart, use_container_width = True)
     
 # Expander Selector
@@ -319,12 +322,12 @@ bar = bar_chart(area_selected)
 
 with left4:
     
-    st.header(f'Crime rate in {area_selected} compared to the Los Angeles average')
+    st.write(f'Crime rate in {area_selected} compared to the Los Angeles average.')
     st.plotly_chart(bar, use_container_width= True)
     
 
 with right4:
     
-    st.header(f'Ethnicity distribution of the crime victims in {area_selected}')
+    st.write(f'Ethnicity distribution of the crime victims in {area_selected}.')
     st.plotly_chart(ring, use_container_width = True)
     
