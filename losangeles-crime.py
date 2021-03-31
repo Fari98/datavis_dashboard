@@ -210,7 +210,7 @@ def crime_line(year, area):
 ## Layout
 
 st.title('Crime in Los Angeles')
-st.subheader('Visual  interactive analysis of Los Angeles crimes from 2010 though 2019')
+st.subheader('Interactive visual analysis of Los Angeles crimes from 2010 though 2019')
 
 st.write('')
 st.write('')
