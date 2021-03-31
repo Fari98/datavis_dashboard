@@ -18,6 +18,9 @@ pop_data = pd.read_csv('data/Population_HV.csv')
 crime_type['Date'] = pd.to_datetime(crime_type.Date)
 ## Functions
 
+size_fr = 150
+size_tr = 200
+
 def map(data, lat, lon, zoom):
     st.write(pdk.Deck(
         map_style="mapbox://styles/mapbox/light-v9",
@@ -81,6 +84,7 @@ def most_affected_area(data, year):
         number={"font":{"size":40}},
         title = {"text": f"Area with the highest number<br>of crimes in {year_selected}<br><br><span style='font-size:1.8em;color:gray'>{most_affected_area}</span>"}
     ))
+    fig.update_layout(autosize=False, width=size_fr, height=size_fr)
     
     return fig        
 
@@ -106,6 +110,8 @@ def crimes_occured_delta(data, year):
                       'decreasing.color' : 'green',
                       'increasing.color' : 'red'}}]
                              }})
+    fig.update_layout(autosize=False, width=size_fr, height=size_fr)
+    
     return fig
 
 def least_affected_area(data, year):
@@ -127,6 +133,7 @@ def least_affected_area(data, year):
         number={"font":{"size":40}},
         title = {"text": f"Area with the lowest number<br>of crimes in {year_selected}<br><br><span style='font-size:1.8em;color:gray'>{most_affected_area}</span>"}
     ))
+    fig.update_layout(autosize=False, width=size_fr, height=size_fr)
     
     return fig  
 
@@ -149,6 +156,7 @@ def most_affected_year(data, area):
         title = {"text": f"Year with highest number<br> of crimes in {area_selected}<br><br><span style='font-size:1.8em;color:gray'>{most_affected_year}</span>"}
         ))
     
+    fig.update_layout(autosize=False, width=size_tr, height=size_tr)
     return fig
 
 def population_percentage(data, area):
@@ -166,9 +174,11 @@ def population_percentage(data, area):
         value = int(selected_area_popu),
         number={"font":{"size":40}},
         domain = {'row': 0, 'column': 1},
-        title = {"text": f"{area} population<br><br><span style='font-size:1.8em;color:gray'>{selected_area_percent_popu}</span><br>"}
+        title = {"text": f"{area} population compared to<br>total Los Angeles population <br><br><span style='font-size:1.8em;color:gray'>{selected_area_percent_popu}</span><br>"}
         ))
     
+    fig.update_layout(autosize=False, width=size_tr, height=size_tr)
+
     return fig
 
 def barchart(year):
@@ -182,7 +192,7 @@ def barchart(year):
 
     fig.update_layout(dict(yaxis = dict(ticklabelposition = "inside right")))
     
-    fig.update_layout(autosize=False, width=2000, height=600)
+    fig.update_layout(autosize=False, width=2000, height=400)
 
     return fig
 
@@ -244,15 +254,15 @@ left2, spacer, right2 = st.beta_columns((1, 0.1, 1.2))
 
 midpoint = (np.average(crime["LAT"]), np.average(crime["LON"]))
 barchart = barchart(year_selected)
-with left2:
+# with left2:
 
-    st.header("Map of Los Angeles crimes in %i" % (year_selected))
-    st.write('')
-    map(crime, midpoint[0], midpoint[1], 8.5)
+st.header("Map of Los Angeles crimes in %i" % (year_selected))
+st.write('')
+map(crime, midpoint[0], midpoint[1], 8.5)
 
-with right2:
-    st.header("Top 10 most occurent cryme types in %i" % (year_selected))
-    st.plotly_chart(barchart, use_container_width = True)
+# with right2:
+st.header("Top 10 most occurent crime types in %i" % (year_selected))
+st.plotly_chart(barchart, use_container_width = True)
     
 # Expander Selector
 
@@ -286,18 +296,20 @@ st.write('')
 
 ## Third row
 
-left3, spacer, right3 = st.beta_columns((0.3, 0.1, 1))
+left3, right3 = st.beta_columns((1, 1))
 
 ma_year = most_affected_year(crime_bar, area_selected)
 pop_perc = population_percentage(pop_data, area_selected)
 with left3:
     st.plotly_chart(ma_year, use_container_width = True)
     # st.plotly_chart(pop_perc, use_container_width = True)
+with right3:
+    st.plotly_chart(pop_perc, use_container_width = True)
 
 lc = crime_line(year_selected, area_selected)
-with right3:
-    st.header(f'Top 10 most occured cryme types in {area_selected} and their evolution through {year_selected}.')
-    st.plotly_chart(lc, use_container_width = True)
+# with right3:
+st.header(f'Top 10 most occured crime types in {area_selected} and their evolution through {year_selected}.')
+st.plotly_chart(lc, use_container_width = True)
 
 ## Fourth Row 
 left4, spacer, right4 = st.beta_columns((1, 0.1, 1))
@@ -313,6 +325,6 @@ with left4:
 
 with right4:
     
-    st.header(f'Ethnicity distribution in {area_selected}')
+    st.header(f'Ethnicity distribution of the crime victims in {area_selected}')
     st.plotly_chart(ring, use_container_width = True)
     
