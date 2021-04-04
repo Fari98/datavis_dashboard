@@ -12,7 +12,7 @@ victim_donut_data = pd.read_csv('data/victims_donut_data.csv', index_col = 0)
 pop_area_count = pd.read_csv('data/pop_area_count.csv', index_col = 0)
 crime_bar = pd.read_csv('data/la_crime_data.csv')
 crime_type = pd.read_csv('data/crime_type.csv', index_col = 0)
-crimeAreaDF = pd.read_csv('data/crimeDate_crimeTypes.csv', index_col = 0)
+#crimeAreaDF = pd.read_csv('data/crimeDate_crimeTypes.csv', index_col = 0)
 pop_data = pd.read_csv('data/Population_HV.csv')
 
 crime_type['Date'] = pd.to_datetime(crime_type.Date)
@@ -69,6 +69,8 @@ def bar_chart(selected):
     data = data.rename(columns={'Area name':'Area'})
     title = selected
     fig = px.bar(data, x='Area', y='Avg. number of reported crimes per inhabitants per year')#, title=title)
+    fig.update_layout(paper_bgcolor='rgba(0,0,0,0)',plot_bgcolor='rgba(0,0,0,0)')  
+    fig.update_traces(marker_color='rgb(246, 51, 102)') 
     return fig
 
 def most_affected_area(data, year):
@@ -84,36 +86,49 @@ def most_affected_area(data, year):
     fig.add_trace(go.Indicator(
         mode = "number",
         value = crimes_occured_most,
-        number={"font":{"size":40}},
+        number={"font":{"size":40, "color":"rgb(246, 51, 102)"}},
         title = {"text": f"Area with the highest number<br>of crimes in {year_selected}<br><br><span style='font-size:1.8em;color:gray'>{most_affected_area}</span>"}
     ))
     fig.update_layout(autosize=False, width=size_fr, height=size_fr)
     
+    
     return fig        
 
 def crimes_occured_delta(data, year):
-    # Define the variables
-    crimes_occur_selected = len(data[(data['Year'] == year)])
-    crimes_occur_bf_selected = len(data[(data['Year'] == year-1)])
-    
-    # Plot it
-    fig = go.Figure()
 
-    fig.add_trace(go.Indicator(
-        mode = "number+delta",
-        value = crimes_occur_selected,
-        number={"font":{"size":40}}
-        ))
+    if year == 2010:
+        # Define the variables
+        crimes_occur_selected = len(data[(data['Year'] == year)])
+        # Plot it
+        fig = go.Figure()
+        fig.add_trace(go.Indicator(
+            mode = "number",
+            value = crimes_occur_selected,
+            number={"font":{"size":40, "color":"rgb(246, 51, 102)"}},
+            title = {'text': f"Number of Committed Crimes in {year}"}
+            ))
+        fig.update_layout(autosize=False, width=size_fr, height=size_fr)
 
 
-    fig.update_layout(
-        template = {'data' : {'indicator': [{
-            'title': {'text': f"Number of Occured Crimes in {year}<br>compared to previuos year"},
-            'delta' : {'reference': crimes_occur_bf_selected,
-                      'decreasing.color' : 'green',
-                      'increasing.color' : 'red'}}]
-                             }})
-    fig.update_layout(autosize=False, width=size_fr, height=size_fr)
+    else:
+        # Define the variables
+        crimes_occur_selected = len(data[(data['Year'] == year)])
+        crimes_occur_bf_selected = len(data[(data['Year'] == year-1)])
+        # Plot it
+        fig = go.Figure()
+        fig.add_trace(go.Indicator(
+            mode = "number+delta",
+            value = crimes_occur_selected,
+            number={"font":{"size":40, "color":"rgb(246, 51, 102)"}},
+            title = {'text': f"Number of Committed Crimes in {year}<br>compared to previuos year"}
+            ))
+        fig.update_layout(
+            template = {'data' : {'indicator': [{
+                'delta' : {'reference': crimes_occur_bf_selected,
+                        'decreasing.color' : 'green',
+                        'increasing.color' : 'red'}}]
+                                }})
+        fig.update_layout(autosize=False, width=size_fr, height=size_fr)
     
     return fig
 
@@ -133,7 +148,7 @@ def least_affected_area(data, year):
     fig.add_trace(go.Indicator(
         mode = "number",
         value = crimes_occured_most,
-        number={"font":{"size":40}},
+        number={"font":{"size":40, "color":"rgb(246, 51, 102)"}},
         title = {"text": f"Area with the lowest number<br>of crimes in {year_selected}<br><br><span style='font-size:1.8em;color:gray'>{most_affected_area}</span>"}
     ))
     fig.update_layout(autosize=False, width=size_fr, height=size_fr)
@@ -155,7 +170,7 @@ def most_affected_year(data, area):
     fig.add_trace(go.Indicator(
         mode = "number",
         value = int(crimes_occured_most_year),
-        number={"font":{"size":40}},
+        number={"font":{"size":40, "color":"rgb(246, 51, 102)"}},
         title = {"text": f"Year with highest number<br> of crimes in {area_selected}<br><br><span style='font-size:1.8em;color:gray'>{most_affected_year}</span>"}
         ))
     
@@ -175,7 +190,7 @@ def population_percentage(data, area):
     fig.add_trace(go.Indicator(
         mode = "number",
         value = int(selected_area_popu),
-        number={"font":{"size":40}},
+        number={"font":{"size":40, "color":"rgb(246, 51, 102)"}},
         domain = {'row': 0, 'column': 1},
         title = {"text": f"{area} population compared to<br>total Los Angeles population <br><br><span style='font-size:1.8em;color:gray'>{selected_area_percent_popu}</span><br>"}
         ))
@@ -194,7 +209,10 @@ def barchart(year):
     fig = go.Figure(data=data, layout=layout)
 
     fig.update_layout(dict(yaxis = dict(ticklabelposition = "inside right")))
-    
+    fig.update_traces(marker_color='rgb(246, 51, 102)')
+
+    fig.update_layout(paper_bgcolor='rgba(0,0,0,0)',plot_bgcolor='rgba(0,0,0,0)')
+
     fig.update_layout(autosize=False, width=2000, height=400)
 
     return fig
@@ -218,6 +236,7 @@ def crime_line(year, area):
 
     layout = dict(yaxis = dict(title = 'Count'), xaxis = dict(title = 'Date'))
     fig = go.Figure(data=data, layout=layout)
+    fig.update_layout(paper_bgcolor='rgba(0,0,0,0)',plot_bgcolor='rgba(0,0,0,0)')
     return fig
 
 ## Layout
@@ -230,8 +249,8 @@ st.write('')
 st.write('')
 
 ## Sidebar
-
-year_selected= st.slider("Select a year", min(crime.Year), max(crime.Year))
+st.write('**Select a year**')
+year_selected= st.slider("", min(crime.Year), max(crime.Year))
 crime = crime.query("Year == @year_selected")
 
 ## First Row
@@ -259,12 +278,12 @@ midpoint = (np.average(crime["LAT"]), np.average(crime["LON"]))
 barchart = barchart(year_selected)
 # with left2:
 
-st.header("Map of Los Angeles crimes in %i." % (year_selected))
+st.write("**Map of Los Angeles crimes in %i.**" % (year_selected))
 st.write('')
 map(crime, midpoint[0], midpoint[1], 8.5)
 
 # with right2:
-st.header("Top 10 most occurent crime types in %i." % (year_selected))
+st.write("**Top 10 most occurent crime types in %i.**" % (year_selected))
 st.plotly_chart(barchart, use_container_width = True)
     
 # Expander Selector
@@ -287,11 +306,13 @@ areas = ['Newton',
  'West Valley',
  'Mission',
  'Topanga',
- 'N Hollywood',
+ 'North Hollywood',
  'Foothill',
  'Devonshire']
-expander = st.beta_expander('Select a Neighborhood')
-area_selected= expander.selectbox('', areas)
+areas.sort()
+# expander = st.beta_expander('Select a Neighborhood')
+st.write('**Select a Neighborhood**')
+area_selected= st.selectbox('', areas)
 
 st.write('')
 st.write('')
@@ -311,7 +332,7 @@ with right3:
 
 lc = crime_line(year_selected, area_selected)
 # with right3:
-st.header(f'Top 10 most occured crime types in {area_selected} and their evolution through {year_selected}.')
+st.write(f'**Top 10 most occured crime types in {area_selected} and their evolution through {year_selected}.**')
 st.plotly_chart(lc, use_container_width = True)
 
 ## Fourth Row 
@@ -322,12 +343,12 @@ bar = bar_chart(area_selected)
 
 with left4:
     
-    st.write(f'Crime rate in {area_selected} compared to the Los Angeles average.')
+    st.write(f'**Crime rate in {area_selected} compared to the Los Angeles average**.')
     st.plotly_chart(bar, use_container_width= True)
     
 
 with right4:
     
-    st.write(f'Ethnicity distribution of the crime victims in {area_selected}.')
+    st.write(f'**Ethnicity distribution of the crime victims in {area_selected}.**')
     st.plotly_chart(ring, use_container_width = True)
     
