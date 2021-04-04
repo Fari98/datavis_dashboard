@@ -222,7 +222,7 @@ def crime_line(year, area):
     crime_type_Area = crime_type.query('Area == @area and Date.dt.year == @year')
     # crime_type_Area = crime_type_Area[crime_type_Area['Date'].str.contains(year)]
     crimes_list = ['Agravated assault', 'Burglary','Burglary from vehicle', 'Intimate partner assault', 'Simple assault',
-                   'Small theft (under 950$)', 'Stolen vehicle', 'Teft of identity','Vandalism (felony)', 
+                   'Small theft (under 950$)', 'Stolen vehicle', 'Theft of identity','Vandalism (felony)', 
                    'Vandalism (misdeameanor)']
     crimes_to_hide = ['Agravated assault', 'Intimate partner assault', 'Teft of identity', 'Vandalism (felony)', 'Vandalism (misdeameanor)']
     
